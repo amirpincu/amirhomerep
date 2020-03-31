@@ -1,20 +1,25 @@
 <div class="content" role="main">
   <mat-card class="example-card">
     <mat-card-header>
-      <mat-card-title>{{ data.city }}</mat-card-title>
+      <mat-card-title class="bold-text">{{ data.city }}</mat-card-title>
       <mat-card-subtitle>{{ data.temp }} °</mat-card-subtitle>
     </mat-card-header>
-    <img mat-card-image ng-src="{{weatherDescriptionPath}}" alt="A descriptive image of the weather condition.">
+    <img mat-card-image src="{{weatherImageSrc()}}" alt="A descriptive image of the weather condition.">
     <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
+      <mat-grid-list cols="2" rowHeight="20px">
+        <mat-grid-tile [colspan]="1" [rowspan]="1" class="red-text left-align bold-text">
+          <mat-label>Max Temperature:</mat-label>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1" class="blue-text right-align bold-text">
+          <mat-label>Min Temperature:</mat-label>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1" class="left-align bold-text">
+          <mat-label>{{ data.maxTemp }} °</mat-label>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1" class="right-align bold-text">
+          <mat-label>{{ data.minTemp }} °</mat-label>
+        </mat-grid-tile>
+      </mat-grid-list>
     </mat-card-content>
-    <!-- <mat-card-actions>
-      <button mat-button>LIKE</button>
-      <button mat-button>SHARE</button>
-    </mat-card-actions> -->
   </mat-card>
 </div>

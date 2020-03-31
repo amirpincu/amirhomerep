@@ -26,9 +26,7 @@ export class WeatherCompComponent implements OnInit {
     return `${urlbase}/${specificFileSuffix}`;
   }
 
-  constructor(private weatherDescriptionPath) {
-    this.weatherDescriptionPath = this.weatherImageSrc();
-  }
+  constructor() { }
 
   ngOnInit(): void {
   }

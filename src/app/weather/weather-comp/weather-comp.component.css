@@ -1,6 +1,15 @@
 .mat-card {
-  max-width: 25%;
+  max-width: 30%;
 }
+
+.left-align  { text-align: left; }
+.right-align { text-align: right; }
+.center-align { text-align: center; }
+
+.red-text  { color: #CC3300; }
+.blue-text { color: #0099AA; }
+
+.bold-text { font-weight: bold; }
 
 :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
