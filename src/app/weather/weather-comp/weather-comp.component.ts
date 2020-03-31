@@ -9,11 +9,26 @@ import { CityWeatherDescription, CityWeatherData } from '../models/city-weather.
 export class WeatherCompComponent implements OnInit {
   CityWeatherDescription = CityWeatherDescription;
   @Input()
-  data: CityWeatherData = { city: `City not specified`, temp: 0, maxTemp: 1, minTemp: -1, weatherDesc: `not specified`};
+  data: CityWeatherData = { city: `City not specified`, temp: 0, maxTemp: 1, minTemp: -1, weatherDesc: CityWeatherDescription.sunny};
 
-  public weatherImageSrc()
+  public weatherImageSrc(): string {
+    const urlbase: string = "assets/weather-pics/";
+    const keys = Object.keys(CityWeatherDescription).
+      filter(weather => typeof CityWeatherDescription[weather as any] === "number");
+    var specificFileSuffix = '';
 
-  constructor() { }
+    keys.forEach(weather => {
+      if (this.data.weatherDesc == CityWeatherDescription[weather]) {
+        specificFileSuffix = `${weather}.png`;
+      }
+    })
+
+    return `${urlbase}/${specificFileSuffix}`;
+  }
+
+  constructor(private weatherDescriptionPath) {
+    this.weatherDescriptionPath = this.weatherImageSrc();
+  }
 
   ngOnInit(): void {
   }

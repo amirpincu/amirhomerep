@@ -11,5 +11,5 @@ export class CityWeatherData {
     temp: number;
     maxTemp: number;
     minTemp: number;
-    weatherDesc: string;
+    weatherDesc: CityWeatherDescription;
 }
