@@ -1,1 +1,25 @@
-<p>weather-view-comp works!</p>
+<div class="content" role="main">
+    <div>
+        <mat-label class="spacer">Please enter a city:</mat-label>
+        <mat-form-field class="spacer">
+            <mat-label>City</mat-label>
+            <input matInput>
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="spacer">Send to check</button>
+    </div>
+    <app-weather-comp></app-weather-comp>
+    <mat-grid-list cols="5">
+        <mat-grid-tile [colspan]="1" [rowspan]="2">
+            <app-weather-comp></app-weather-comp>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="2">
+            <app-weather-comp></app-weather-comp>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="2">
+            <app-weather-comp></app-weather-comp>
+        </mat-grid-tile>
+        <!-- <mat-grid-tile *ngFor="let city of cities" [colspan]="1" [rowspan]="2">
+            <app-weather-comp [data]="city"></app-weather-comp>
+        </mat-grid-tile> -->
+    </mat-grid-list>
+</div>

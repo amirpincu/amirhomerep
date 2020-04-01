@@ -22,7 +22,7 @@ import { WeatherViewCompComponent } from './weather/weather-view-comp/weather-vi
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: WelcomeCompComponent }, 
-  { path: 'weather', component: WeatherCompComponent }
+  { path: 'weather', component: WeatherViewCompComponent }
 ]
 
 @NgModule({
