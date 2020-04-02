@@ -13,11 +13,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { HttpClientModule } from '@angular/common/http';
 
 // Components
 import { WelcomeCompComponent } from './welcome/welcome-comp/welcome-comp.component';
 import { WeatherCompComponent } from './weather/weather-comp/weather-comp.component';
 import { WeatherViewCompComponent } from './weather/weather-view-comp/weather-view-comp.component';
+import { WeatherServService } from './weather/services/weather-serv.service';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -39,7 +41,7 @@ const appRoutes: Routes = [
     CommonModule,
 
     MatInputModule, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatGridListModule,
+    MatFormFieldModule, MatGridListModule, HttpClientModule,
 
     RouterModule,
     RouterModule.forRoot(
@@ -47,7 +49,7 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     ),
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [ WeatherServService ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }
