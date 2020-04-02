@@ -5,7 +5,7 @@
   </mat-card-header>
   <img mat-card-image src="{{weatherImageSrc()}}" alt="A descriptive image of the weather condition.">
   <mat-card-content>
-    <mat-grid-list cols="2" rowHeight="20px">
+    <mat-grid-list id="weatherList" cols="2" rowHeight="20px">
       <mat-grid-tile [colspan]="1" [rowspan]="1" class="red-text left-align bold-text">
         <mat-label>Max Temp.:</mat-label>
       </mat-grid-tile>

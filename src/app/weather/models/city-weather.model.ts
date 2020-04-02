@@ -4,6 +4,7 @@ export enum CityWeatherDescription {
     raining,
     storm,
     snowing,
+    clear,
 }
 
 export class CityWeatherData {
