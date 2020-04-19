@@ -7,8 +7,10 @@
         </mat-form-field>
         <button mat-raised-button color="primary" class="spacer" click="addCity()">Add City</button>
     </div>
+    <app-weather-comp></app-weather-comp>
+    <app-weather-comp></app-weather-comp>
     <div>
-        <mat-grid-list  cols="5">
+        <!-- <mat-grid-list  cols="5">
             <mat-grid-tile [colspan]="1" [rowspan]="2">
                 <app-weather-comp></app-weather-comp>
             </mat-grid-tile>
@@ -18,9 +20,9 @@
             <mat-grid-tile [colspan]="1" [rowspan]="2">
                 <app-weather-comp></app-weather-comp>
             </mat-grid-tile>
-            <!-- <mat-grid-tile *ngFor="let city of cities" [colspan]="1" [rowspan]="2">
+            <mat-grid-tile *ngFor="let city of cities" [colspan]="1" [rowspan]="2">
                 <app-weather-comp [data]="city"></app-weather-comp>
-            </mat-grid-tile> -->
-        </mat-grid-list>
+            </mat-grid-tile>
+        </mat-grid-list> -->
     </div>
 </div>

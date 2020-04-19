@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http/http';
 export class WeatherServService {
 
   constructor(public http: HttpClient) { }
+  // constructor() { }
 
   public getCityWeatherByName(city: string, metric: 'metric' | 'imperial' = 'metric'): Subject<string> {
     const dataSub = new Subject<string>();

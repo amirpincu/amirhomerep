@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 // Components
 import { WelcomeCompComponent } from './welcome/welcome-comp/welcome-comp.component';
@@ -41,7 +41,7 @@ const appRoutes: Routes = [
     CommonModule,
 
     MatInputModule, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatGridListModule, HttpClientModule,
+    MatFormFieldModule, MatGridListModule, HttpClient,
 
     RouterModule,
     RouterModule.forRoot(

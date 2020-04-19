@@ -13,11 +13,11 @@ export class WeatherViewCompComponent implements OnInit {
   private cities: CityWeatherData[] = [];
 
   // City info
-  private cityName: string;
-  private cityState: CityWeatherState;
-  private cityTemp: number;
-  private cityMaxTemp: number;
-  private cityMinTemp: number;
+  private cityName: string = "cityNotGiven";
+  private cityState: CityWeatherState = CityWeatherState.clear;
+  private cityTemp: number = 0;
+  private cityMaxTemp: number = 0;
+  private cityMinTemp: number = 0;
 
   // subscriptions
   private stateSub: Subscription;
@@ -28,14 +28,18 @@ export class WeatherViewCompComponent implements OnInit {
   constructor(private wethServ: WeatherServService) { }
 
   ngOnInit(): void {
+    // test city
     this.cities.push({ city: 'new-york', temp: 15, maxTemp: 18, minTemp: 14, weatherDesc: CityWeatherState.raining });
   }
 
   addCity(): void {
+    // uses the given city name to get information about the city
+    // FOR NOW STARTING WITH THE STATE
+
     this.stateSub = this.wethServ.getWeatherState(this.cityName).subscribe((state) => this.cityState = this.stateStringtoEnum(state));
-    this.tempSub = this.wethServ.getCurrentTemperature(this.cityName).subscribe((temp) => this.cityTemp = temp);
-    this.maxTempSub = this.wethServ.getMaxTemperature(this.cityName).subscribe((temp) => this.cityMaxTemp = temp);
-    this.minTempSub = this.wethServ.getMinTemperature(this.cityName).subscribe((temp) => this.cityMinTemp = temp);
+    // this.tempSub = this.wethServ.getCurrentTemperature(this.cityName).subscribe((temp) => this.cityTemp = temp);
+    // this.maxTempSub = this.wethServ.getMaxTemperature(this.cityName).subscribe((temp) => this.cityMaxTemp = temp);
+    // this.minTempSub = this.wethServ.getMinTemperature(this.cityName).subscribe((temp) => this.cityMinTemp = temp);
 
     this.cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
       minTemp: this.cityMinTemp, weatherDesc: this.cityState } );
