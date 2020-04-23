@@ -42,43 +42,28 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
   }
 
   addCity(): void {
-    const dataSubs = this.wethServ.getCityWeather(this.cityName);
+    // const dataSubs = this.wethServ.getCityWeather(this.cityName);
 
-    this.activeRouter.paramMap.subscribe((route: any) => { 
-      // // uses the given city name to get information about the city
-      this.weatherStateSub = dataSubs.description.subscribe((state) => this.cityState = this.stateStringtoEnum(state));
-      this.tempSub = dataSubs.temperature.subscribe((temp) => this.cityTemp = temp);
-      this.maxTempSub = dataSubs.maxTemperature.subscribe((temp) => this.cityMaxTemp = temp);
-      this.minTempSub = dataSubs.minTemperature.subscribe((temp) => this.cityMinTemp = temp);
+    // this.activeRouter.paramMap.subscribe((route: any) => { 
+    //   // // uses the given city name to get information about the city
+    //   this.weatherStateSub = dataSubs.description.subscribe((state) => this.cityState = this.stateStringtoEnum(state));
+    //   this.tempSub = dataSubs.temperature.subscribe((temp) => this.cityTemp = temp);
+    //   this.maxTempSub = dataSubs.maxTemperature.subscribe((temp) => this.cityMaxTemp = temp);
+    //   this.minTempSub = dataSubs.minTemperature.subscribe((temp) => this.cityMinTemp = temp);
 
-      this._cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
-      minTemp: this.cityMinTemp, weatherDesc: this.cityState } );
-    })
-  }
+    //   this._cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
+    //   minTemp: this.cityMinTemp, weatherDesc: this.cityState } );
+    // })
 
-  stateStringtoEnum(state: string) {
-    switch (state.toLowerCase()) {
-      case 'clear':
-        return CityWeatherState.clear;
-      case 'sunny':
-        return CityWeatherState.sunny;
-      case 'cloudy':
-        return CityWeatherState.cloudy;
-      case 'raining':
-        return CityWeatherState.raining;
-      case 'storm':
-        return CityWeatherState.storm;
-      case 'snowing':
-        return CityWeatherState.snowing;
-    }
-
-    return undefined;
+    const data: any = this.wethServ.getCityWeatherByName(this.cityName);
+    this.cities.push(data);
+    console.log(data);
   }
 
   ngOnDestroy() {
-    this.weatherStateSub.unsubscribe();
-    this.tempSub.unsubscribe();
-    this.maxTempSub.unsubscribe();
-    this.minTempSub.unsubscribe();
+    // this.weatherStateSub.unsubscribe();
+    // this.tempSub.unsubscribe();
+    // this.maxTempSub.unsubscribe();
+    // this.minTempSub.unsubscribe();
   }
 }

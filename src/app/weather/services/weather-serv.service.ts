@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ThrowStmt } from '@angular/compiler';
+import { CityWeatherDescription as CityWeatherState } from '../models/city-weather.model';
+import { ThrowStmt, templateJitUrl } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,43 @@ export class WeatherServService {
       minTemperature: dataSubject[3]
     };
     return returnData;
+  }
+
+
+  public getCityWeatherByName(city: string) : any {
+    const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=de2c28d421ef9a6cba1f11256865f442`;
+    var returnData: any = { city: '', temp: 0, maxTemp: 0, minTemp: 0, weatherDesc: '' };
+    return this.http.get(url, {responseType: 'json'}).subscribe(res => {
+      
+      returnData['city'] = (res as {})['name'];
+      returnData['temp'] = (res as {})['main']['temp'];
+      returnData['maxTemp'] = (res as {})['main']['temp_max'];
+      returnData['minTemp'] = (res as {})['main']['temp_min'];
+
+      console.log(returnData);
+      return returnData;
+    });
+  }
+
+  private stateStringtoEnum(state: string) {
+    switch (state.toLowerCase()) {
+      case 'clear':
+        return CityWeatherState.clear;
+      case 'sunny':
+        return CityWeatherState.sunny;
+      case 'cloudy':
+        return CityWeatherState.cloudy;
+      case 'raining':
+        return CityWeatherState.raining;
+      case 'storm':
+        return CityWeatherState.storm;
+      case 'snowing':
+        return CityWeatherState.snowing;
+      default:
+        return CityWeatherState.err;
+    }
+
+    return undefined;
   }
 
   /*

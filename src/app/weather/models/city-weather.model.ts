@@ -5,6 +5,7 @@ export enum CityWeatherDescription {
     storm,
     snowing,
     clear,
+    err, // should not be used
 }
 
 export class CityWeatherData {
