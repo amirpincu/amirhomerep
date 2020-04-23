@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CityWeatherData, CityWeatherDescription as CityWeatherState } from '../models/city-weather.model';
 import { WeatherServService } from '../services/weather-serv.service';
 import { FormsModule } from '@angular/forms';
 import { state } from '@angular/animations';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-weather-view-comp',
   templateUrl: './weather-view-comp.component.html',
   styleUrls: ['./weather-view-comp.component.css']
 })
-export class WeatherViewCompComponent implements OnInit {
+export class WeatherViewCompComponent implements OnInit, OnDestroy {
   // keeps a list of the cities displayed
   private _cities: CityWeatherData[] = [];
 
@@ -25,7 +26,7 @@ export class WeatherViewCompComponent implements OnInit {
   private cityMinTemp: number = 0;
 
   // subscriptions to city information
-  private stateSub: Subscription;
+  private weatherStateSub: Subscription;
   private tempSub: Subscription;
   private maxTempSub: Subscription;
   private minTempSub: Subscription;
@@ -33,7 +34,7 @@ export class WeatherViewCompComponent implements OnInit {
   // ngModel
   public cityName: string;
 
-  constructor(private wethServ: WeatherServService) { }
+  constructor(private wethServ: WeatherServService, private activeRouter: ActivatedRoute) { }
 
   ngOnInit(): void {
     // test city
@@ -41,20 +42,22 @@ export class WeatherViewCompComponent implements OnInit {
   }
 
   addCity(): void {
-    // uses the given city name to get information about the city
-    // FOR NOW STARTING WITH THE STATE
+    const dataSubs = this.wethServ.getCityWeather(this.cityName);
 
-    this.stateSub = this.wethServ.getWeatherState(this.cityName).subscribe((state) => this.cityState = this.stateStringtoEnum(state));
-    this.tempSub = this.wethServ.getCurrentTemperature(this.cityName).subscribe((temp) => this.cityTemp = temp);
-    this.maxTempSub = this.wethServ.getMaxTemperature(this.cityName).subscribe((temp) => this.cityMaxTemp = temp);
-    this.minTempSub = this.wethServ.getMinTemperature(this.cityName).subscribe((temp) => this.cityMinTemp = temp);
+    this.activeRouter.paramMap.subscribe((route: any) => { 
+      // // uses the given city name to get information about the city
+      this.weatherStateSub = dataSubs.description.subscribe((state) => this.cityState = this.stateStringtoEnum(state));
+      this.tempSub = dataSubs.temperature.subscribe((temp) => this.cityTemp = temp);
+      this.maxTempSub = dataSubs.maxTemperature.subscribe((temp) => this.cityMaxTemp = temp);
+      this.minTempSub = dataSubs.minTemperature.subscribe((temp) => this.cityMinTemp = temp);
 
-    this._cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
+      this._cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
       minTemp: this.cityMinTemp, weatherDesc: this.cityState } );
+    })
   }
 
   stateStringtoEnum(state: string) {
-    switch (state) {
+    switch (state.toLowerCase()) {
       case 'clear':
         return CityWeatherState.clear;
       case 'sunny':
@@ -73,7 +76,7 @@ export class WeatherViewCompComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.stateSub.unsubscribe();
+    this.weatherStateSub.unsubscribe();
     this.tempSub.unsubscribe();
     this.maxTempSub.unsubscribe();
     this.minTempSub.unsubscribe();
