@@ -19,18 +19,6 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
 
   public set cities(value: CityWeatherData[]) { this._cities = value; }
 
-  // City info (used temporeraly)
-  private cityState: CityWeatherState = CityWeatherState.clear;
-  private cityTemp: number = 0;
-  private cityMaxTemp: number = 0;
-  private cityMinTemp: number = 0;
-
-  // subscriptions to city information
-  private weatherStateSub: Subscription;
-  private tempSub: Subscription;
-  private maxTempSub: Subscription;
-  private minTempSub: Subscription;
-
   // ngModel
   public cityName: string;
 
@@ -42,28 +30,11 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
   }
 
   addCity(): void {
-    // const dataSubs = this.wethServ.getCityWeather(this.cityName);
-
-    // this.activeRouter.paramMap.subscribe((route: any) => { 
-    //   // // uses the given city name to get information about the city
-    //   this.weatherStateSub = dataSubs.description.subscribe((state) => this.cityState = this.stateStringtoEnum(state));
-    //   this.tempSub = dataSubs.temperature.subscribe((temp) => this.cityTemp = temp);
-    //   this.maxTempSub = dataSubs.maxTemperature.subscribe((temp) => this.cityMaxTemp = temp);
-    //   this.minTempSub = dataSubs.minTemperature.subscribe((temp) => this.cityMinTemp = temp);
-
-    //   this._cities.push( { city: this.cityName, temp: this.cityTemp, maxTemp: this.cityMaxTemp, 
-    //   minTemp: this.cityMinTemp, weatherDesc: this.cityState } );
-    // })
-
     const data: any = this.wethServ.getCityWeatherByName(this.cityName);
     this.cities.push(data);
     console.log(data);
   }
 
   ngOnDestroy() {
-    // this.weatherStateSub.unsubscribe();
-    // this.tempSub.unsubscribe();
-    // this.maxTempSub.unsubscribe();
-    // this.minTempSub.unsubscribe();
   }
 }

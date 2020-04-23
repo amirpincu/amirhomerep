@@ -39,15 +39,16 @@ export class WeatherServService {
 
   public getCityWeatherByName(city: string) : any {
     const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=de2c28d421ef9a6cba1f11256865f442`;
-    var returnData: any = { city: '', temp: 0, maxTemp: 0, minTemp: 0, weatherDesc: '' };
+    var returnData: any = { city: '', temp: 0, maxTemp: 0, minTemp: 0, weatherDesc: CityWeatherState.err };
     return this.http.get(url, {responseType: 'json'}).subscribe(res => {
       
       returnData['city'] = (res as {})['name'];
       returnData['temp'] = (res as {})['main']['temp'];
       returnData['maxTemp'] = (res as {})['main']['temp_max'];
       returnData['minTemp'] = (res as {})['main']['temp_min'];
+      returnData['weatherDesc'] = this.stateStringtoEnum((res as {})['weather'][0]['main']);
 
-      console.log(returnData);
+      console.log((res as {})['weather'][0]['main']);
       return returnData;
     });
   }
