@@ -1,148 +1,68 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { CityWeatherDescription as CityWeatherState } from '../models/city-weather.model';
 import { ThrowStmt, templateJitUrl } from '@angular/compiler';
+import { CityWeatherData } from '../models/city-weather.model';
+
+export enum WeatherAPIResponseCod {
+  valid = 200,
+  cityNotFound = 404,
+  invalidApiKey = 401,
+  unknown = -1
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherServService {
+  private _cities : CityWeatherData[] = [];
+  private _tempCode : WeatherAPIResponseCod = WeatherAPIResponseCod.valid;
+
   constructor(public http: HttpClient) { }
 
-  public getCityWeather(city: string) : any {
-    let dataSubject: any = [
-      new Subject<string>(), new Subject<number>(), // desctiprion, temperature
-      new Subject<number>(), new Subject<number>()  // minimum and maximum temperature
-    ];
+  private getCityWeather(url: string) {
+    return this.http.get(url, {responseType: 'json'}).subscribe(restResult => {
+      switch (((restResult as {})['cod'])) {
+        case 200:
+          this._tempCode = WeatherAPIResponseCod.valid; break;
+        case 401:
+          this._tempCode = WeatherAPIResponseCod.invalidApiKey; break;
+        case 404:
+          this._tempCode = WeatherAPIResponseCod.cityNotFound; break;
+        default:
+          this._tempCode = WeatherAPIResponseCod.unknown;
+      }
 
-    const qry : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=de2c28d421ef9a6cba1f11256865f442`;
-    this.http.get(qry).subscribe(
-      (data) =>  { 
-        dataSubject[0].next(data['weather'][0].main);
-        dataSubject[1].next(Math.round(Number(data['main'].temp)));
-        dataSubject[2].next(Math.round(Number(data['main'].temp_max)));
-        dataSubject[3].next(Math.round(Number(data['main'].temp_min)));
-      },
-      (err) => { console.log(err); }
-    );
-
-    const returnData = {
-      description: dataSubject[0],
-      temperature: dataSubject[1],
-      maxTemperature: dataSubject[2],
-      minTemperature: dataSubject[3]
-    };
-    return returnData;
-  }
-
-
-  public getCityWeatherByName(city: string) : any {
-    const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=de2c28d421ef9a6cba1f11256865f442`;
-    var returnData: any = { city: '', temp: 0, maxTemp: 0, minTemp: 0, weatherDesc: CityWeatherState.err };
-    return this.http.get(url, {responseType: 'json'}).subscribe(res => {
-      
-      returnData['city'] = (res as {})['name'];
-      returnData['temp'] = (res as {})['main']['temp'];
-      returnData['maxTemp'] = (res as {})['main']['temp_max'];
-      returnData['minTemp'] = (res as {})['main']['temp_min'];
-      returnData['weatherDesc'] = this.stateStringtoEnum((res as {})['weather'][0]['main']);
-
-      console.log((res as {})['weather'][0]['main']);
-      return returnData;
+      if (this._tempCode == WeatherAPIResponseCod.valid) {
+        this._cities.push( {
+            city: (restResult as {})['name'],
+            temp: (restResult as {})['main']['temp'],
+            maxTemp: (restResult as {})['main']['temp_max'],
+            minTemp: (restResult as {})['main']['temp_min'],
+            weatherDesc: (restResult as {})['weather'][0]['icon']
+          }
+        );
+      }
     });
   }
 
-  private stateStringtoEnum(state: string) {
-    switch (state.toLowerCase()) {
-      case 'clear':
-        return CityWeatherState.clear;
-      case 'sunny':
-        return CityWeatherState.sunny;
-      case 'cloudy':
-        return CityWeatherState.cloudy;
-      case 'raining':
-        return CityWeatherState.raining;
-      case 'storm':
-        return CityWeatherState.storm;
-      case 'snowing':
-        return CityWeatherState.snowing;
-      default:
-        return CityWeatherState.err;
-    }
-
-    return undefined;
-  }
-
   /*
-  public getCityWeatherByName(city: string, metric: 'metric' | 'imperial' = 'metric'): Subject<string> {
-    const dataSub = new Subject<string>();
-    this.http.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${metric}&APPID=de2c28d421ef9a6cba1f11256865f442`)
-      .subscribe((data) => {
-        dataSub.next(data['weather']);
-      }, (err) => {
-        console.log(err);
-      });
-    return dataSub;
-  }
-
-  // Returns weather description: clear, sunny, cloudy, raining, storm, snowy
-  public getWeatherState(city: string): Subject<string> {
-    const dataSubject = new Subject<string>();
-    this.http.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=de2c28d421ef9a6cba1f11256865f442`)
-      .subscribe((data) => {
-        dataSubject.next(data['weather'][0].main);
-      });
-    return dataSubject;
-  }
-
-  // Returns current temperature
-  public getCurrentTemperature(city: string, metric: 'metric' | 'imperial' = 'metric'): Subject<number> {
-    const dataSubject = new Subject<number>();
-    this.http.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${metric}&APPID=de2c28d421ef9a6cba1f11256865f442`)
-      .subscribe((weather: any) => {
-        dataSubject.next(Math.round(Number(weather.main.temp)));
-      });
-    return dataSubject;
-  }
-
-  // Returns the maximum temperature
-  public getMaxTemperature(city: string, metric: 'metric' | 'imperial' = 'metric'): Subject<number>  {
-    const dataSubject = new Subject<number>();
-    let max: number;
-    this.http.get(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${metric}&APPID=de2c28d421ef9a6cba1f11256865f442`)
-      .subscribe((weather: any) => {
-        max = weather.list[0].main.temp;
-        weather.list.forEach((value) => {
-          if (max < value.main.temp) {
-            max = value.main.temp;
-          }
-        });
-        dataSubject.next(Math.round(max));
-      });
-    return dataSubject;
-  }
-
-  // Returns the minimum temperature
-  public getMinTemperature(city: string, metric: 'metric' | 'imperial' = 'metric'): Subject<number>  {
-    const dataSubject = new Subject<number>();
-    let min: number;
-    this.http.get(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${metric}&APPID=de2c28d421ef9a6cba1f11256865f442`)
-      .subscribe((weather: any) => {
-        min = weather.list[0].main.temp;
-        weather.list.forEach((value) => {
-          if (min > value.main.temp) {
-            min = value.main.temp;
-          }
-        });
-        dataSubject.next(Math.round(min));
-      });
-    return dataSubject;
-  }
+  /// Gets weather info for city
+  /// Return values:
+  /// WeatherAPIResponseCod.valid (200) -         The requested city was added to the city list and now needs to be updated.
+  /// WeatherAPIResponseCod.cityNotFound (404) -  The requested city was not found. Inform the requester.
+  /// WeatherAPIResponseCod.invalidApiKey (401) - The API needs to be renewd or extanded.
   */
+ public async cityWeatherByName(city: string) {
+  const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=72a1ea74c1b0cbe1633ae3d07c395dd3`;
+  await this.getCityWeather(url);
+}
+
+  public getCityRequestCode() {
+    return this._tempCode;
+  }
+
+  public getCities(): CityWeatherData[] {
+    return this._cities;
+  }
 }

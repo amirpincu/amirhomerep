@@ -21,6 +21,10 @@ import { WelcomeCompComponent } from './welcome/welcome-comp/welcome-comp.compon
 import { WeatherCompComponent } from './weather/weather-comp/weather-comp.component';
 import { WeatherViewCompComponent } from './weather/weather-view-comp/weather-view-comp.component';
 import { WeatherServService } from './weather/services/weather-serv.service';
+import { WeatherDialogCompComponent } from './weather/weather-dialog-comp/weather-dialog-comp.component';
+
+// Dialog
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -34,6 +38,7 @@ const appRoutes: Routes = [
     WelcomeCompComponent,
     WeatherCompComponent,
     WeatherViewCompComponent,
+    WeatherDialogCompComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +56,11 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     ),
   ],
-  providers: [ WeatherServService ],
+  providers: [
+    WeatherServService,
+    { provide: MatDialogRef, useValue: {} },
+	  { provide: MAT_DIALOG_DATA, useValue: [] },
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }
