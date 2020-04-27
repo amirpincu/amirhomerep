@@ -1,4 +1,10 @@
 <div class="content" role="main">
+    <div [ngSwitch]="getReturnCode()">
+        <p *ngSwitchCase="200" class="error"></p>
+        <p *ngSwitchCase="404" class="error">City {{cityName}} was not found within the API's database.</p>
+        <p *ngSwitchCase="401" class="error">The access to the API needs to be renewed.</p>
+        <p *ngSwitchCase="-1" class="error">Unknown error occoured.</p>
+      </div>
     <div>
         <mat-label class="spacer">Please enter a city:</mat-label>
         <mat-form-field class="spacer">

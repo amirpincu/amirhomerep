@@ -5,8 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { state } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { WeatherDialogCompComponent } from '../weather-dialog-comp/weather-dialog-comp.component';
 
 @Component({
   selector: 'app-weather-view-comp',
@@ -16,6 +14,7 @@ import { WeatherDialogCompComponent } from '../weather-dialog-comp/weather-dialo
 export class WeatherViewCompComponent implements OnInit, OnDestroy {
   // keeps a list of the cities displayed
   private _cities: CityWeatherData[] = [];
+  private _retCode: WeatherAPIResponseCod = WeatherAPIResponseCod.valid;
 
   public get cities(): CityWeatherData[] { return this._cities; }
 
@@ -24,7 +23,10 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
   // ngModel
   public cityName: string;
 
-  constructor(private wethServ: WeatherServService, private activeRouter: ActivatedRoute, private dialog: MatDialog) { }
+  constructor(private wethServ: WeatherServService, 
+    private activeRouter: ActivatedRoute ) { }
+  
+  public getReturnCode() { return this._retCode; }
 
   ngOnInit(): void {
     // this._cities.push({ city: 'TEST CITY', temp: 15, maxTemp: 18, minTemp: 14, weatherDesc: '01d' });
@@ -32,23 +34,14 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
 
   async addCity(): Promise<void> {
     await this.wethServ.cityWeatherByName(this.cityName);
-    const returnCode = this.wethServ.getCityRequestCode();
+    this._retCode = this.wethServ.getCityRequestCode();
 
-    switch (returnCode) {
+    switch (this._retCode) {
       case WeatherAPIResponseCod.valid : {
         this.cities = this.wethServ.getCities();
       }
-      default : {
-        this.openDialog(returnCode);
-      }
+      default : { }
     }
-  }
-
-  public openDialog(code: number) {
-    const dialogRef = this.dialog.open(WeatherDialogCompComponent, {
-      width: '500px',
-      data: { data: code }
-    });
   }
 
   ngOnDestroy() {
