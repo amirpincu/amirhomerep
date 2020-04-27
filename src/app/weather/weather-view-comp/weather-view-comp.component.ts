@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 export class WeatherViewCompComponent implements OnInit, OnDestroy {
   // keeps a list of the cities displayed
   private _cities: CityWeatherData[] = [];
-  private _retCode: WeatherAPIResponseCod = WeatherAPIResponseCod.valid;
+  public msg: string = "";
 
   public get cities(): CityWeatherData[] { return this._cities; }
 
@@ -25,22 +25,27 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
 
   constructor(private wethServ: WeatherServService, 
     private activeRouter: ActivatedRoute ) { }
-  
-  public getReturnCode() { return this._retCode; }
 
-  ngOnInit(): void {
-    // this._cities.push({ city: 'TEST CITY', temp: 15, maxTemp: 18, minTemp: 14, weatherDesc: '01d' });
-  }
+  ngOnInit(): void { }
 
   async addCity(): Promise<void> {
     await this.wethServ.cityWeatherByName(this.cityName);
-    this._retCode = this.wethServ.getCityRequestCode();
+    const retCode = this.wethServ.getCityRequestCode();
 
-    switch (this._retCode) {
+    switch (retCode) {
       case WeatherAPIResponseCod.valid : {
-        this.cities = this.wethServ.getCities();
+        this.msg = "";
+        this.cities = this.wethServ.getCities(); break;
       }
-      default : { }
+      case WeatherAPIResponseCod.cityNotFound : {
+        this.msg = `The city '${this.cityName}' was not found within the service's database.`; break;
+      }
+      case WeatherAPIResponseCod.invalidApiKey : {
+        this.msg = `The API key currently used is now invalid. please renew it.`; break;
+      }
+      case WeatherAPIResponseCod.unknown: {
+        this.msg = `Unknown error occoured, please try again.`; break;
+      }
     }
   }
 
