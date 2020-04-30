@@ -1,7 +1,7 @@
 <mat-card class="example-card">
   <mat-card-header>
-    <mat-card-title class="bold-text">{{ data.city }}</mat-card-title>
-    <mat-card-subtitle>{{ data.temp }} °</mat-card-subtitle>
+    <mat-card-title class="bold-text">{{ data.cityName }}</mat-card-title>
+    <mat-card-subtitle>{{ data.temp }}° C</mat-card-subtitle>
   </mat-card-header>
   <img mat-card-image src="{{weatherImageSrc()}}" alt="A descriptive image of the weather condition.">
   <mat-card-content>
@@ -13,10 +13,10 @@
         <mat-label>Min Temp.:</mat-label>
       </mat-grid-tile>
       <mat-grid-tile [colspan]="1" [rowspan]="1" class="left-align bold-text">
-        <mat-label>{{ data.maxTemp }} °</mat-label>
+        <mat-label>{{ data.maxTemp }}° C</mat-label>
       </mat-grid-tile>
       <mat-grid-tile [colspan]="1" [rowspan]="1" class="right-align bold-text">
-        <mat-label>{{ data.minTemp }} °</mat-label>
+        <mat-label>{{ data.minTemp }}° C</mat-label>
       </mat-grid-tile>
     </mat-grid-list>
   </mat-card-content>

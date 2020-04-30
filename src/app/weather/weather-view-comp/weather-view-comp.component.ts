@@ -1,9 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CityWeatherData } from '../models/city-weather.model';
 import { WeatherServService, WeatherAPIResponseCod } from '../services/weather-serv.service';
-import { FormsModule } from '@angular/forms';
-import { state } from '@angular/animations';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -31,6 +28,7 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
   async addCity(): Promise<void> {
     await this.wethServ.cityWeatherByName(this.cityName);
     const retCode = this.wethServ.getCityRequestCode();
+    console.log('response: ' + retCode);
 
     switch (retCode) {
       case WeatherAPIResponseCod.valid : {

@@ -2,6 +2,10 @@
   color: #dd0000;
 }
 
+.align {
+  align-items: center;
+}
+
 .spacer {
   margin: 10px;
 }

@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class WeatherCompComponent implements OnInit, OnDestroy {
   @Input()
-  data: CityWeatherData = { city: `City not specified`, temp: 0, maxTemp: 1, minTemp: -1, weatherDesc: '01d'};
+  data: CityWeatherData = { cityName: `City not specified`, temp: 0, maxTemp: 1, minTemp: -1, weatherDesc: '01d'};
 
   public weatherImageSrc(): string {
     const url: string = `assets/weather-pics/${this.data.weatherDesc}.png`;
