@@ -16,7 +16,7 @@ export enum WeatherAPIResponseCod {
 })
 export class WeatherServService {
   private _cities : CityWeatherData[] = [];
-  private _tempCode : WeatherAPIResponseCod = WeatherAPIResponseCod.valid;
+  private _tempCode : WeatherAPIResponseCod = WeatherAPIResponseCod.unknown;
 
   constructor(public http: HttpClient) { }
 
@@ -31,46 +31,101 @@ export class WeatherServService {
     const result = (foundCityIndex == -1) ? this._cities.push(newCity) : this._cities[foundCityIndex] = newCity;
   }
 
-  /*
-  /// Requests the http rest query.
-  */
-  private getCityWeather( url: string ) {
-    return this.http.get( url, {responseType: 'json'} ).subscribe(restResult => {
-      // Checks what message came back
-      switch (((restResult as {})['cod'])) {
-        case 200:
-          this._tempCode = WeatherAPIResponseCod.valid; break;
-        case 401:
-          this._tempCode = WeatherAPIResponseCod.invalidApiKey; break;
-        case 404:
-          this._tempCode = WeatherAPIResponseCod.cityNotFound; break;
-        default:
-          this._tempCode = WeatherAPIResponseCod.unknown;
-      }
+  // /*
+  // /// Requests the http rest query.
+  // */
+  // private getCityWeather( url: string ) {
+  //   return this.http.get( url, {responseType: 'json'} ).toPromise().then(data => {
+  //     // Checks what message came back
+  //     var msgCode = WeatherAPIResponseCod.unknown;
+  //     switch (((data as {})['cod'])) {
+  //       case 200:
+  //         msgCode = WeatherAPIResponseCod.valid; break;
+  //       case 401:
+  //         msgCode = WeatherAPIResponseCod.invalidApiKey; break;
+  //       case 404:
+  //         msgCode = WeatherAPIResponseCod.cityNotFound; break;
+  //       default:
+  //         msgCode = WeatherAPIResponseCod.unknown;
+  //     }
 
-      // Creates a new city
-      if (this._tempCode == WeatherAPIResponseCod.valid) {
-        // Creates a new city from the data
-        const newCity: CityWeatherData = {
-          cityName: (restResult as {})['name'], temp: (restResult as {})['main']['temp'], maxTemp: (restResult as {})['main']['temp_max'],
-          minTemp: (restResult as {})['main']['temp_min'], weatherDesc: (restResult as {})['weather'][0]['icon']
-        };
+  //     this._tempCode = msgCode;
 
-        this.addCity(newCity);
-      }
+  //     // Creates a new city
+  //     if (this._tempCode == WeatherAPIResponseCod.valid) {
+  //       // Creates a new city from the data
+  //       const newCity: CityWeatherData = {
+  //         cityName: (data as {})['name'], temp: (data as {})['main']['temp'], maxTemp: (data as {})['main']['temp_max'],
+  //         minTemp: (data as {})['main']['temp_min'], weatherDesc: (data as {})['weather'][0]['icon']
+  //       };
+
+  //       this.addCity(newCity);
+  //     }
+  //   });
+  // }
+
+  // /*
+  // /// Gets weather info for city
+  // /// Return values:
+  // /// WeatherAPIResponseCod.valid (200) -         The requested city was added to the city list and now needs to be updated.
+  // /// WeatherAPIResponseCod.cityNotFound (404) -  The requested city was not found. Inform the requester.
+  // /// WeatherAPIResponseCod.invalidApiKey (401) - The API needs to be renewd or extanded.
+  // */
+  // public async cityWeatherByName(city: string) {
+  //   const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=72a1ea74c1b0cbe1633ae3d07c395dd3`;
+  //   await this.getCityWeather(url);
+  // }
+
+  public requestCityWeatherByName( city: string ) {
+    return new Promise((resolve, reject) => {
+      const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=72a1ea74c1b0cbe1633ae3d07c395dd3`;
+      this.http.get(url).toPromise().then(
+        res => {
+          console.log(`requestCityWeatherByName - accepter - cod: 200`);
+          this._tempCode = WeatherAPIResponseCod.valid;
+
+          // Creates a new city
+          if (this._tempCode == WeatherAPIResponseCod.valid) {
+            // Creates a new city from the data
+            const newCity: CityWeatherData = {
+              cityName: (res as {})['name'], temp: (res as {})['main']['temp'], maxTemp: (res as {})['main']['temp_max'],
+              minTemp: (res as {})['main']['temp_min'], weatherDesc: (res as {})['weather'][0]['icon']
+            };
+
+            this.addCity(newCity);
+          }
+
+          console.log("positive code recieved.")
+        },
+        msg => {
+          // An error message came back. As such I just need the code to find out what went wrong.
+          // To understand how I extract the code, here is an object example:
+          /*
+          { headers: HttpHeaders,
+            status: 404, 
+            statusText: "Not Found", 
+            url: "https://api.openweathermap.org/data/2.5/ …" }
+          */
+
+          // Getting the error-code to make code clear and save enum equivelent in variable.
+          const errorCode = (msg as {})['status'];
+          var msgCode = WeatherAPIResponseCod.unknown;
+
+          switch (errorCode) {
+            case 401:
+              msgCode = WeatherAPIResponseCod.invalidApiKey; break;
+            case 404:
+              msgCode = WeatherAPIResponseCod.cityNotFound; break;
+            default:
+              msgCode = WeatherAPIResponseCod.unknown;
+          }
+
+          console.log(`requestCityWeatherByName - rejected - code: ${msgCode}`);
+          this._tempCode = msgCode;
+          reject();
+        }
+      )
     });
-  }
-
-  /*
-  /// Gets weather info for city
-  /// Return values:
-  /// WeatherAPIResponseCod.valid (200) -         The requested city was added to the city list and now needs to be updated.
-  /// WeatherAPIResponseCod.cityNotFound (404) -  The requested city was not found. Inform the requester.
-  /// WeatherAPIResponseCod.invalidApiKey (401) - The API needs to be renewd or extanded.
-  */
-  public async cityWeatherByName(city: string) {
-    const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=72a1ea74c1b0cbe1633ae3d07c395dd3`;
-    await this.getCityWeather(url);
   }
 
   /*
@@ -78,7 +133,8 @@ export class WeatherServService {
   /// This should be used after cityWeatherByName
   */
   public getCityRequestCode() : WeatherAPIResponseCod {
-    return this._tempCode;
+    const keepVal = this._tempCode; // this._tempCode = WeatherAPIResponseCod.unknown;
+    return keepVal;
   }
 
   /*

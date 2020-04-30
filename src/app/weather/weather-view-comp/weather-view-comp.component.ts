@@ -25,8 +25,8 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void { }
 
-  async addCity(): Promise<void> {
-    await this.wethServ.cityWeatherByName(this.cityName);
+  addCity() {
+    const a = this.wethServ.requestCityWeatherByName(this.cityName);
     const retCode = this.wethServ.getCityRequestCode();
     console.log('response: ' + retCode);
 
@@ -43,6 +43,9 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
       }
       case WeatherAPIResponseCod.unknown: {
         this.msg = `Unknown error occoured, please try again.`; break;
+      }
+      case undefined: {
+        this.msg = `The function RequestCityWeatherByName was not activated.`
       }
     }
   }
