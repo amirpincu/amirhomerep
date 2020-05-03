@@ -1,15 +1,21 @@
+<!-- All things in the component are within a grid the size of the screen -->
 <mat-grid-list cols="4">
+    <!-- The input and output part -->
     <mat-grid-tile [colspan]="4">
         <div class="align">
+            <!-- Message output -->
             <p class="error">{{msg}}</p> <br>
             <mat-label class="spacer">Please enter a city:</mat-label>
+            <!-- City name input -->
             <mat-form-field class="spacer">
                 <mat-label>City</mat-label>
                 <input matInput [(ngModel)]="cityName">
             </mat-form-field>
+            <!-- Button to confirm written city -->
             <button mat-raised-button color="primary" class="spacer" (click)="addCity()">Add City</button>
         </div>
     </mat-grid-tile>
+    <!-- All city cards -->
     <mat-grid-tile *ngFor="let city of cities">
         <div class="align"> 
             <app-weather-comp [data]="city"></app-weather-comp>
