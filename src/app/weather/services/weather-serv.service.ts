@@ -77,7 +77,7 @@ export class WeatherServService {
   // }
 
   public requestCityWeatherByName( city: string ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<WeatherAPIResponseCod>((resolve, reject) => {
       const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=72a1ea74c1b0cbe1633ae3d07c395dd3`;
       this.http.get(url).toPromise().then(
         res => {
@@ -95,6 +95,7 @@ export class WeatherServService {
             this.addCity(newCity);
           }
 
+          resolve(this._tempCode);
           console.log("positive code recieved.")
         },
         msg => {
@@ -122,6 +123,7 @@ export class WeatherServService {
 
           console.log(`requestCityWeatherByName - rejected - code: ${msgCode}`);
           this._tempCode = msgCode;
+          resolve(this._tempCode);
           reject();
         }
       )
