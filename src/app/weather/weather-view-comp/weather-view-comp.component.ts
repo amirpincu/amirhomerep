@@ -10,18 +10,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class WeatherViewCompComponent implements OnInit, OnDestroy {
   // keeps a list of the cities displayed
-  private _cities: CityWeatherData[] = [];
-  public get cities(): CityWeatherData[] { return this._cities; }
-  public set cities(value: CityWeatherData[]) { this._cities = value; }
+  public cities: CityWeatherData[] = [];
 
-  private _msg: string = "";
-  public get msg(): string { return this._msg; }
-  public set msg(value: string) { this._msg = value; }
+  public msg: string = "";
 
-  // ngModel
-  public cityName: string;
-
-  constructor(private wethServ: WeatherServService, 
+  constructor(public wethServ: WeatherServService, 
     private activeRouter: ActivatedRoute ) { }
 
   ngOnInit(): void { }
@@ -29,17 +22,17 @@ export class WeatherViewCompComponent implements OnInit, OnDestroy {
   /*
   /// Sends the city in cityName to the weather servie, gets an http response code and acts acordingly.
   */
-  async addCity() {
-    if (this.cityName) { // check if a city was even given
-      const retCode: WeatherAPIResponseCod = await this.wethServ.requestCityWeatherByName(this.cityName);
+  async addCity( city: string ) {
+    if (city) { // check if a city was even given
+      const retCode: WeatherAPIResponseCod = await this.wethServ.requestCityWeatherByName(city);
   
       switch (retCode) {
         case WeatherAPIResponseCod.valid : { // The city was found in an returned from the web service, an existing city was updated.
           this.msg = "";
-          this.cities = this.wethServ.getCities(); break;
+          this.cities = this.wethServ.cities; break;
         }
         case WeatherAPIResponseCod.cityNotFound : { // The city was not found within the web sevice's database.
-          this.msg = `The city '${this.cityName}' was not found within the service's database.`; break;
+          this.msg = `The city '${city}' was not found within the service's database.`; break;
         }
         case WeatherAPIResponseCod.invalidApiKey : { // Since i'm using the free version of the API, this means I should
           this.msg = `The API key currently used is now invalid. please renew it.`; break;

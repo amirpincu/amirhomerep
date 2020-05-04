@@ -4,7 +4,7 @@
     <mat-grid-tile [colspan]="4">
         <div class="align">
             <!-- Message output -->
-            <p class="error">{{msg}}</p> <br>
+            <p class="error">{{msg}}</p> <br> 
             <mat-label class="spacer">Please enter a city:</mat-label>
             <!-- City name input -->
             <mat-form-field class="spacer">
@@ -12,11 +12,11 @@
                 <input matInput [(ngModel)]="cityName">
             </mat-form-field>
             <!-- Button to confirm written city -->
-            <button mat-raised-button color="primary" class="spacer" (click)="addCity()">Add City</button>
+            <button mat-raised-button color="primary" class="spacer" (click)="addCity(cityName)">Add City</button>
         </div>
     </mat-grid-tile>
     <!-- All city cards -->
-    <mat-grid-tile *ngFor="let city of cities">
+    <mat-grid-tile *ngFor="let city of wethServ.cities">
         <div class="align"> 
             <app-weather-comp [data]="city"></app-weather-comp>
         </div>

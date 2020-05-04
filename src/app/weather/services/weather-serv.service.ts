@@ -16,7 +16,7 @@ export enum WeatherAPIResponseCod {
   providedIn: 'root'
 })
 export class WeatherServService {
-  private _cities : CityWeatherData[] = [];
+  public cities : CityWeatherData[] = [];
 
   constructor(public http: HttpClient) { }
 
@@ -24,14 +24,8 @@ export class WeatherServService {
   /// Adds an entierley new city and replaces an already existing one.
   */
   private addCity( newCity: CityWeatherData ) : void {
-    // find if a city by the same cityName already exists.
-    let foundCityIndex = -1;
-    this._cities.forEach((city, cityIndex) => {
-      if (city.cityName == newCity.cityName) { foundCityIndex = cityIndex; }
-    });
-    
-    // replace the existing city's data or add a new one to the array.
-    (foundCityIndex == -1) ? this._cities.push(newCity) : this._cities[foundCityIndex] = newCity;
+    const existingCityIndex = this.cities.findIndex(currentCity => ( currentCity.cityName == newCity.cityName ));
+    (existingCityIndex == -1) ? this.cities.push(newCity) : this.cities[existingCityIndex] = newCity;
   }
 
   /*
@@ -49,14 +43,16 @@ export class WeatherServService {
         res => {
           // Creates a new city from the data then add it
           const newCity: CityWeatherData = {
-            cityName: (res as {})['name'], temp: (res as {})['main']['temp'], maxTemp: (res as {})['main']['temp_max'],
-            minTemp: (res as {})['main']['temp_min'], weatherDesc: (res as {})['weather'][0]['icon']
+            cityName: res['name'], 
+            temp: res['main']['temp'], 
+            maxTemp: res['main']['temp_max'],
+            minTemp: res['main']['temp_min'], 
+            weatherDesc: res['weather'][0]['icon']
           };
           this.addCity(newCity);
-        
+
           // send back a valid response
           resolve(WeatherAPIResponseCod.valid);
-          console.log("positive code recieved.")
         },
         msg => {
           // An error message came back. As such I just need the code to find out what went wrong.
@@ -69,7 +65,7 @@ export class WeatherServService {
           */
 
           // Getting the error-code to make code clear and save enum equivelent in variable.
-          const errorCode = (msg as {})['status'];
+          const errorCode = msg['status'];
           let errorType = WeatherAPIResponseCod.unknown;
 
           switch (errorCode) {
@@ -86,12 +82,5 @@ export class WeatherServService {
         }
       )
     });
-  }
-
-  /*
-  /// Returns the current city list
-  */
-  public getCities(): CityWeatherData[] {
-    return this._cities;
   }
 }
