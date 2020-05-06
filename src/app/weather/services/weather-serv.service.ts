@@ -23,15 +23,20 @@ export class WeatherServService {
   /*
   /// Adds an entierley new city and replaces an already existing one.
   */
-  private addCity( newCity: CityWeatherData ) : void {
+  private AddCity( newCity: CityWeatherData ) : void {
     const existingCityIndex = this.cities.findIndex(currentCity => ( currentCity.cityName == newCity.cityName ));
     (existingCityIndex == -1) ? this.cities.push(newCity) : this.cities[existingCityIndex] = newCity;
+  }
+
+  public CityWeatherObservable( city:string ) : Observable<object> {
+    const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WeatherConstants.appApiKey}`;
+    return this.http.get(url);
   }
 
   /*
   /// Returns a promise of a WeatherAPIResponseCod according to the response from a http request partaining to a given city name.
   */
-  public requestCityWeatherByName( city: string ) {
+  public RequestCityWeatherByName( city: string ) {
     return new Promise<WeatherAPIResponseCod>((resolve, reject) => {
       // format the url for the request
       const url : string = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WeatherConstants.appApiKey}`;
@@ -49,7 +54,7 @@ export class WeatherServService {
             minTemp: res['main']['temp_min'], 
             weatherDesc: res['weather'][0]['icon']
           };
-          this.addCity(newCity);
+          this.AddCity(newCity);
 
           // send back a valid response
           resolve(WeatherAPIResponseCod.valid);
